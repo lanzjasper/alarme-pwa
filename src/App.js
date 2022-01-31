@@ -56,12 +56,13 @@ function App() {
       // alert('puta');
       console.log('we are being triggered :D');
       setSupportsPWA(true);
+      setPromptInstall(e);
     };
     console.log('supported');
     window.addEventListener('beforeinstallprompt', (e) => {});
 
     return () => window.removeEventListener('transitionend', handler);
-  }, [setPromptInstall]);
+  }, [setPromptInstall, setSupportsPWA]);
 
   const onClick = async () => {
     promptInstall.prompt();
