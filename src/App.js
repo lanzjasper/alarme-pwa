@@ -46,23 +46,20 @@ function App() {
   const register = () => {
     navigate('/register');
   };
-  // const [supportsPWA, setSupportsPWA] = useState(false);
+  const [supportsPWA, setSupportsPWA] = useState(false);
   const [promptInstall, setPromptInstall] = useState(null);
 
   useEffect(() => {
     const handler = (e) => {
-      // console.log('e', e);
-      // e.preventDefault();
-      // alert('puta');
-      console.log('we are being triggered :D');
-      // setSupportsPWA(true);
+      alert('Is supported!');
+      e.preventDefault();
+      setSupportsPWA(true);
       setPromptInstall(e);
     };
-    console.log('supported');
-    window.addEventListener('beforeinstallprompt', (e) => {});
+    window.addEventListener('beforeinstallprompt', handler);
 
     return () => window.removeEventListener('transitionend', handler);
-  }, [setPromptInstall]);
+  }, [setPromptInstall, setSupportsPWA]);
 
   const onClick = async () => {
     promptInstall.prompt();
@@ -99,6 +96,7 @@ function App() {
         }}
       >
         <div className="container">
+          Supports PWA: {supportsPWA}
           <div className="row">
             <div className="col s12">
               <div className="input-field col s12">
