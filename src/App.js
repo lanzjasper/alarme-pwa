@@ -26,6 +26,14 @@ function App() {
       if (loginResult.data.success) {
         // eslint-disable-next-line
         M.toast({ html: 'Login successful!', displayLength: 2000 });
+
+        delete loginResult.data.success;
+
+        for (let [key, value] of Object.entries(loginResult.data)) {
+          sessionStorage.setItem(key, value);
+        }
+
+        navigate('/home');
       } else {
         // eslint-disable-next-line
         M.toast({
@@ -96,7 +104,6 @@ function App() {
         }}
       >
         <div className="container">
-          Supports PWA: {supportsPWA}
           <div className="row">
             <div className="col s12">
               <div className="input-field col s12">
@@ -146,17 +153,20 @@ function App() {
                 </button>
               </div>
             </div>
-            <div className="col s12">
-              <button
-                className="link-button"
-                id="setup_button"
-                aria-label="Install app"
-                title="Install app"
-                onClick={onClick}
-              >
-                Install App
-              </button>
-            </div>
+            {supportsPWA && (
+              <div className="col s12">
+                <div className="input-field col s12">
+                  <button
+                    className={`waves-effect waves-light btn-large`}
+                    type="button"
+                    onClick={onClick()}
+                  >
+                    INSTALL APP
+                    <i class="material-icons right">cloud_download</i>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

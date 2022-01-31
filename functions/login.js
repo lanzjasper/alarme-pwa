@@ -41,12 +41,17 @@ exports.handler = async (event) => {
           loginJSON.password,
           userPassword
         );
+        let response = { success: isValidPassword };
+
+        if (isValidPassword) {
+          delete usernameExists.user_password;
+
+          response = { ...response, ...usernameExists };
+        }
 
         return {
           statusCode: 200,
-          body: JSON.stringify({
-            success: isValidPassword
-          }),
+          body: JSON.stringify(response),
           headers: {
             'Content-Type': 'application/json'
           }
