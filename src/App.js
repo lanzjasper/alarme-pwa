@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -45,6 +45,30 @@ function App() {
   };
   const register = () => {
     navigate('/register');
+  };
+  const [supportsPWA, setSupportsPWA] = useState(false);
+  const [promptInstall, setPromptInstall] = useState(null);
+
+  useEffect(() => {
+    const handler = (e) => {
+      // console.log('e', e);
+      // e.preventDefault();
+      // alert('puta');
+      console.log('we are being triggered :D');
+      setSupportsPWA(true);
+    };
+    console.log('supported');
+    window.addEventListener('beforeinstallprompt', (e) => {});
+
+    return () => window.removeEventListener('transitionend', handler);
+  }, [setPromptInstall]);
+
+  const onClick = async () => {
+    promptInstall.prompt();
+    const { outcome } = await promptInstall.userChoice;
+    if (outcome === 'accepted') {
+      setPromptInstall(null);
+    }
   };
 
   return (
@@ -122,6 +146,17 @@ function App() {
                   REGISTER
                 </button>
               </div>
+            </div>
+            <div className="col s12">
+              <button
+                className="link-button"
+                id="setup_button"
+                aria-label="Install app"
+                title="Install app"
+                onClick={onClick}
+              >
+                Install App
+              </button>
             </div>
           </div>
         </div>
