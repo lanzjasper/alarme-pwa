@@ -46,7 +46,7 @@ function App() {
   const register = () => {
     navigate('/register');
   };
-  const [supportsPWA, setSupportsPWA] = useState(false);
+  // const [supportsPWA, setSupportsPWA] = useState(false);
   const [promptInstall, setPromptInstall] = useState(null);
 
   useEffect(() => {
@@ -55,14 +55,14 @@ function App() {
       // e.preventDefault();
       // alert('puta');
       console.log('we are being triggered :D');
-      setSupportsPWA(true);
+      // setSupportsPWA(true);
       setPromptInstall(e);
     };
     console.log('supported');
     window.addEventListener('beforeinstallprompt', (e) => {});
 
     return () => window.removeEventListener('transitionend', handler);
-  }, [setPromptInstall, setSupportsPWA]);
+  }, [setPromptInstall]);
 
   const onClick = async () => {
     promptInstall.prompt();
