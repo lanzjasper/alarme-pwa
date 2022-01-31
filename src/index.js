@@ -7,6 +7,7 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import RegisterPage from './pages/RegisterPage';
 import Home from './pages/Home';
+import CallForEmergency from './pages/CallForEmergency';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -15,6 +16,7 @@ ReactDOM.render(
         <Route path="/" element={<App />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/call-emergency" element={<CallForEmergency />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,
