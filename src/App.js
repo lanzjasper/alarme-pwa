@@ -59,7 +59,6 @@ function App() {
 
   useEffect(() => {
     const handler = (e) => {
-      alert('Is supported!');
       e.preventDefault();
       setSupportsPWA(true);
       setPromptInstall(e);
