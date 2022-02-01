@@ -8,6 +8,10 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import RegisterPage from './pages/RegisterPage';
 import Home from './pages/Home';
 import CallForEmergency from './pages/CallForEmergency';
+import ReportIncident from './pages/ReportIncident';
+import IncidentDetails from './pages/IncidentDetails';
+import RiskRating from './pages/RiskRating';
+import ReportSummary from './pages/ReportSummary';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -17,6 +21,10 @@ ReactDOM.render(
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/home" element={<Home />} />
         <Route path="/call-emergency" element={<CallForEmergency />} />
+        <Route path="/report-incident" element={<ReportIncident />} />
+        <Route path="/incident-details" element={<IncidentDetails />} />
+        <Route path="/risk-rating" element={<RiskRating />} />
+        <Route path="/report-summary" element={<ReportSummary />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,

@@ -1,6 +1,9 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import HomeNavigation from '../components/HomeNavigation';
 
-const CallForEmergency = () => {
+const ReportIncident = () => {
+  const navigate = useNavigate();
   const styles = {
     titleStyle: {
       display: 'flex',
@@ -12,6 +15,13 @@ const CallForEmergency = () => {
     iconStyle: {
       fontSize: 40
     }
+  };
+  const fillUpIncidentDetails = (selectedIncident) => {
+    navigate('/incident-details', {
+      state: {
+        selectedIncident: selectedIncident
+      }
+    });
   };
 
   return (
@@ -27,11 +37,11 @@ const CallForEmergency = () => {
           <div
             className="card-panel teal waves-effect waves-block waves-light"
             onClick={() => {
-              window.open('tel:72951669');
+              fillUpIncidentDetails('Fire');
             }}
           >
             <div style={styles.titleStyle} className="white-text">
-              Fire
+              <span style={{ marginRight: 5 }}>Fire</span>
               <span className="material-icons" style={styles.iconStyle}>
                 fire_extinguisher
               </span>
@@ -40,11 +50,11 @@ const CallForEmergency = () => {
           <div
             className="card-panel teal waves-effect waves-block waves-light"
             onClick={() => {
-              window.open('tel:88824151');
+              fillUpIncidentDetails('Traffic');
             }}
           >
             <div style={styles.titleStyle} className="white-text">
-              Traffic
+              <span style={{ marginRight: 5 }}>Traffic</span>
               <span className="material-icons" style={styles.iconStyle}>
                 traffic
               </span>
@@ -53,13 +63,26 @@ const CallForEmergency = () => {
           <div
             className="card-panel teal waves-effect waves-block waves-light"
             onClick={() => {
-              window.open('tel:911');
+              fillUpIncidentDetails('Public Safety');
             }}
           >
             <div style={styles.titleStyle} className="white-text">
-              Public Safety
+              <span style={{ marginRight: 5 }}>Public Safety</span>
               <span className="material-icons" style={styles.iconStyle}>
                 health_and_safety
+              </span>
+            </div>
+          </div>
+          <div
+            className="card-panel teal waves-effect waves-block waves-light"
+            onClick={() => {
+              fillUpIncidentDetails('Other Concerns');
+            }}
+          >
+            <div style={styles.titleStyle} className="white-text">
+              <span style={{ marginRight: 5 }}>Other Concerns</span>
+              <span className="material-icons" style={styles.iconStyle}>
+                sentiment_very_dissatisfied
               </span>
             </div>
           </div>
@@ -69,4 +92,4 @@ const CallForEmergency = () => {
   );
 };
 
-export default CallForEmergency;
+export default ReportIncident;
