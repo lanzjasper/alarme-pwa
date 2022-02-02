@@ -132,7 +132,11 @@ function App() {
                 </button>
               </div>
             </div>
-            <InstallButton />
+            <div className="col s12">
+              <div className="input-field col s12">
+                <InstallButton />
+              </div>
+            </div>
           </div>
         </div>
       </div>
