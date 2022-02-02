@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import InstallButton from './components/InstallButton';
 
 function App() {
   const navigate = useNavigate();
@@ -54,27 +55,6 @@ function App() {
   const register = () => {
     navigate('/register');
   };
-  const [supportsPWA, setSupportsPWA] = useState(false);
-  const [promptInstall, setPromptInstall] = useState(null);
-
-  useEffect(() => {
-    const handler = (e) => {
-      e.preventDefault();
-      setSupportsPWA(true);
-      setPromptInstall(e);
-    };
-    window.addEventListener('beforeinstallprompt', handler);
-
-    return () => window.removeEventListener('transitionend', handler);
-  }, [setPromptInstall, setSupportsPWA]);
-
-  const onClick = async () => {
-    promptInstall.prompt();
-    const { outcome } = await promptInstall.userChoice;
-    if (outcome === 'accepted') {
-      setPromptInstall(null);
-    }
-  };
 
   return (
     <>
@@ -97,7 +77,7 @@ function App() {
       </nav>
       <div
         style={{
-          height: 'calc(100vh - 64px)',
+          height: 'calc(100vh - 158px)',
           display: 'flex',
           alignItems: 'center'
         }}
@@ -152,20 +132,7 @@ function App() {
                 </button>
               </div>
             </div>
-            {supportsPWA && (
-              <div className="col s12">
-                <div className="input-field col s12">
-                  <button
-                    className={`waves-effect waves-light btn-large`}
-                    type="button"
-                    onClick={onClick()}
-                  >
-                    INSTALL APP
-                    <i class="material-icons right">cloud_download</i>
-                  </button>
-                </div>
-              </div>
-            )}
+            <InstallButton />
           </div>
         </div>
       </div>
