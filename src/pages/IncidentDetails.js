@@ -1,6 +1,6 @@
 import HomeNavigation from '../components/HomeNavigation';
 import { useLocation, useNavigate } from 'react-router-dom';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const IncidentDetails = () => {
@@ -32,21 +32,57 @@ const IncidentDetails = () => {
     ],
     'Other Concerns': [{ name: 'Others', id: 18 }]
   };
+  let initialSubreportValueIndex = null;
+
+  if (state.subreport_id) {
+    for (let value of Object.values(radioValue)) {
+      initialSubreportValueIndex = value.findIndex(
+        (v) => v.id === parseInt(state.subreport_id)
+      );
+
+      if (initialSubreportValueIndex !== -1) {
+        break;
+      }
+    }
+  }
+
   const [reportName, setReportName] = useState(
-    radioValue[state.selectedIncident][0].id
+    radioValue[state.selectedIncident][initialSubreportValueIndex || 0].id
   );
-  const [comment, setComment] = useState('');
-  const [attachmentURL, setAttachmentURL] = useState(null);
+  const [comment, setComment] = useState(state.report_description || '');
+  const [attachmentURL, setAttachmentURL] = useState(
+    state.report_multimedia || null
+  );
   const [isUploading, setIsUploading] = useState(false);
   const goToRiskRating = () => {
-    navigate('/risk-rating', {
-      state: {
-        selectedIncident: state.selectedIncident,
-        subreport_id: reportName,
-        report_description: comment,
-        attachmentURL: attachmentURL
-      }
-    });
+    if (state.operation === 'update') {
+      const emergencyIDMapping = {
+        Fire: 1,
+        Traffic: 3,
+        'Public Safety': 4,
+        'Other Concerns': 2
+      };
+      navigate('/report-summary', {
+        state: {
+          userid: sessionStorage.getItem('userid'),
+          emergency_id: emergencyIDMapping[state.selectedIncident],
+          subreport_id: reportName,
+          report_description: comment,
+          report_multimedia: attachmentURL,
+          report_status: state.report_status,
+          selectedIncident: state.selectedIncident
+        }
+      });
+    } else {
+      navigate('/risk-rating', {
+        state: {
+          selectedIncident: state.selectedIncident,
+          subreport_id: reportName,
+          report_description: comment,
+          attachmentURL: attachmentURL
+        }
+      });
+    }
   };
   const uploadImage = (fileAttachment) => {
     let formData = new FormData();
@@ -66,6 +102,19 @@ const IncidentDetails = () => {
       .catch(() => {
         setIsUploading(false);
       });
+  };
+
+  useEffect(() => {
+    // eslint-disable-next-line
+    M.updateTextFields();
+  }, []);
+
+  const determineCheckedRadio = (currentValueID, index) => {
+    if (state.subreport_id) {
+      return currentValueID === parseInt(state.subreport_id);
+    }
+
+    return index === 0;
   };
 
   return (
@@ -94,7 +143,7 @@ const IncidentDetails = () => {
                         onChange={(e) => {
                           setReportName(e.target.value);
                         }}
-                        defaultChecked={i === 0}
+                        defaultChecked={determineCheckedRadio(value.id, i)}
                       />
                       <span>{value.name}</span>
                     </label>
@@ -112,7 +161,7 @@ const IncidentDetails = () => {
                   }}
                   value={comment}
                 ></textarea>
-                <label htmlFor="textarea1">Comments</label>
+                <label htmlFor="comment">Comments</label>
               </div>
             </div>
             <div className="file-field input-field">

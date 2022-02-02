@@ -54,7 +54,10 @@ const Home = () => {
             </div>
           </div>
           <div className="col s12">
-            <div className="card-panel teal waves-effect waves-block waves-light">
+            <div
+              className="card-panel teal waves-effect waves-block waves-light"
+              onClick={() => navigate('/updates-and-announcements ')}
+            >
               <div style={styles.titleStyle} className="white-text">
                 <span style={{ marginRight: 5 }}>Updates and Announcement</span>
                 <span className="material-icons" style={styles.iconStyle}>

@@ -5,9 +5,7 @@ import React, { useState } from 'react';
 const RiskRating = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
-  console.log('state', state.report_status, state.report_status || 5);
   const [category, setCategory] = useState(state.report_status || 5);
-  console.log('category', category);
   const submitAll = async () => {
     const emergencyIDMapping = {
       Fire: 1,
@@ -22,7 +20,8 @@ const RiskRating = () => {
         subreport_id: state.subreport_id,
         report_description: state.report_description,
         report_multimedia: state.attachmentURL,
-        report_status: category
+        report_status: category,
+        selectedIncident: state.selectedIncident
       }
     });
   };
@@ -71,9 +70,6 @@ const RiskRating = () => {
           }}
         >
           {categories.map((_category) => {
-            console.log('_category', _category);
-            console.log('a', category);
-
             return (
               <div key={_category.name}>
                 <div className="col s12">
@@ -87,7 +83,9 @@ const RiskRating = () => {
                         onChange={(e) => {
                           setCategory(e.target.value);
                         }}
-                        defaultChecked={category === _category.value}
+                        defaultChecked={
+                          parseInt(category, 10) === _category.value
+                        }
                       />
                       <span className={`${_category.textColor}`}>
                         {_category.name}

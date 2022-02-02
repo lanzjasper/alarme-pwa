@@ -12,6 +12,7 @@ import ReportIncident from './pages/ReportIncident';
 import IncidentDetails from './pages/IncidentDetails';
 import RiskRating from './pages/RiskRating';
 import ReportSummary from './pages/ReportSummary';
+import UpdatesAndAnnouncements from './pages/UpdatesAndAnnouncements';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -25,6 +26,10 @@ ReactDOM.render(
         <Route path="/incident-details" element={<IncidentDetails />} />
         <Route path="/risk-rating" element={<RiskRating />} />
         <Route path="/report-summary" element={<ReportSummary />} />
+        <Route
+          path="/updates-and-announcements"
+          element={<UpdatesAndAnnouncements />}
+        />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,

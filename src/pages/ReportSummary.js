@@ -99,6 +99,18 @@ const ReportSummary = () => {
       }
     });
   };
+  const editIncidentDetails = () => {
+    navigate('/incident-details', {
+      state: {
+        selectedIncident: state.selectedIncident,
+        subreport_id: state.subreport_id,
+        report_description: state.report_description,
+        report_status: state.report_status,
+        report_multimedia: state.report_multimedia,
+        operation: 'update'
+      }
+    });
+  };
 
   return (
     <>
@@ -120,6 +132,7 @@ const ReportSummary = () => {
                       className="waves-effect waves-teal btn-flat"
                       type="button"
                       style={styles.editButton}
+                      onClick={() => editIncidentDetails()}
                     >
                       <span className="material-icons">edit</span>
                     </button>
@@ -133,6 +146,7 @@ const ReportSummary = () => {
                       className="waves-effect waves-teal btn-flat"
                       type="button"
                       style={styles.editButton}
+                      onClick={() => editIncidentDetails()}
                     >
                       <span className="material-icons">edit</span>
                     </button>
@@ -146,6 +160,7 @@ const ReportSummary = () => {
                           className="waves-effect waves-teal btn-flat"
                           type="button"
                           style={styles.editButton}
+                          onClick={() => editIncidentDetails()}
                         >
                           <span className="material-icons">edit</span>
                         </button>
