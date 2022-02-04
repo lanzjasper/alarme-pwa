@@ -27,7 +27,7 @@ const CallForEmergency = () => {
           <div
             className="card-panel teal waves-effect waves-block waves-light"
             onClick={() => {
-              window.open('tel:72951669');
+              window.open('tel:23107667');
             }}
           >
             <div style={styles.titleStyle} className="white-text">
@@ -40,7 +40,7 @@ const CallForEmergency = () => {
           <div
             className="card-panel teal waves-effect waves-block waves-light"
             onClick={() => {
-              window.open('tel:88824151');
+              window.open('tel:0285634619');
             }}
           >
             <div style={styles.titleStyle} className="white-text">
@@ -53,7 +53,7 @@ const CallForEmergency = () => {
           <div
             className="card-panel teal waves-effect waves-block waves-light"
             onClick={() => {
-              window.open('tel:911');
+              window.open('tel:0285279860');
             }}
           >
             <div style={styles.titleStyle} className="white-text">

@@ -56,6 +56,9 @@ const RegisterPage = () => {
   const [hasAgree, setHasAgree] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
 
+  const [isUploading, setIsUploading] = useState(false);
+  const [attachmentURL, setAttachmentURL] = useState('');
+
   useEffect(() => {
     const stepperDiv = document.querySelector('.stepper');
 
@@ -193,6 +196,25 @@ const RegisterPage = () => {
   const validateProvince = (province) => {
     return province.trim() !== '';
   };
+  const uploadImage = (fileAttachment) => {
+    let formData = new FormData();
+
+    formData.append('upload_preset', 'zyasxaqc');
+    formData.append('tags', 'browser_upload'); // Optional - add tag for image admin in Cloudinary
+    formData.append('file', fileAttachment);
+
+    setIsUploading(true);
+
+    axios
+      .post(`https://api.cloudinary.com/v1_1/alarme/upload`, formData)
+      .then((res) => {
+        setAttachmentURL(res.data.secure_url);
+        setIsUploading(false);
+      })
+      .catch(() => {
+        setIsUploading(false);
+      });
+  };
   const goToPersonalInformation = async () => {
     const validEmail = await validateEmail(emailAddress);
     const validUsername = await validateUsername(username);
@@ -316,7 +338,7 @@ const RegisterPage = () => {
         user_lname: lastName,
         user_mobile: contactNumber,
         user_address: address,
-        user_photo: 'Photo',
+        user_photo: attachmentURL,
         user_suffix: '',
         user_sex: 'm',
         user_telephone: telephoneNumber,
@@ -597,7 +619,7 @@ const RegisterPage = () => {
                   </div>
                 </div>
                 <div className="row">
-                  <div className="col s2" style={{ paddingLeft: 0 }}>
+                  <div className="col s3 m2" style={{ paddingLeft: 0 }}>
                     <label>
                       <input
                         className="with-gap"
@@ -611,7 +633,7 @@ const RegisterPage = () => {
                       <span>Male</span>
                     </label>
                   </div>
-                  <div className="col s2">
+                  <div className="col s3 m2">
                     <label>
                       <input
                         className="with-gap"
@@ -702,7 +724,12 @@ const RegisterPage = () => {
                   <div className="file-field input-field">
                     <div className="btn">
                       <span>Photo</span>
-                      <input type="file" />
+                      <input
+                        type="file"
+                        onChange={(e) => {
+                          uploadImage(e.target.files[0]);
+                        }}
+                      />
                     </div>
                     <div className="file-path-wrapper">
                       <input className="file-path validate" type="text" />
@@ -718,7 +745,9 @@ const RegisterPage = () => {
                     BACK
                   </button>
                   <button
-                    className="waves-effect waves-dark btn"
+                    className={`waves-effect waves-dark btn ${
+                      isUploading ? 'disabled' : ''
+                    }`}
                     onClick={goToPersonalAddress}
                     type="button"
                   >

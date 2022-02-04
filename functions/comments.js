@@ -10,14 +10,13 @@ exports.handler = async (event) => {
 
     connection.connect();
 
-    const likeJSON = JSON.parse(event.body);
-    likeJSON.admin_id = -1;
+    const commentJSON = JSON.parse(event.body);
 
-    const insertLike = () => {
+    const insertComment = () => {
       return new Promise((resolve, reject) => {
         connection.query(
-          'INSERT INTO tbl_likes SET ?',
-          likeJSON,
+          'INSERT INTO tbl_comments SET ?',
+          commentJSON,
           function (error, results) {
             if (error) {
               return reject(error);
@@ -30,7 +29,7 @@ exports.handler = async (event) => {
     };
 
     try {
-      await insertLike();
+      await insertComment();
 
       return {
         statusCode: 200,
@@ -42,7 +41,6 @@ exports.handler = async (event) => {
         }
       };
     } catch (e) {
-      console.log(e);
       return {
         statusCode: 500,
         body: JSON.stringify({
@@ -54,7 +52,7 @@ exports.handler = async (event) => {
         }
       };
     }
-  } else if (event.httpMethod === 'DELETE') {
+  } else if (event.httpMethod === 'GET') {
     const mysql = require('mysql');
     const connection = await mysql.createConnection({
       host: '34.124.154.244',
@@ -65,13 +63,13 @@ exports.handler = async (event) => {
 
     connection.connect();
 
-    const likeJSON = JSON.parse(event.body);
+    const newsID = event.queryStringParameters.newsID;
 
-    const deleteLikes = () => {
+    const getComments = () => {
       return new Promise((resolve, reject) => {
         connection.query(
-          'DELETE FROM tbl_likes WHERE userid = ? and news_id = ?',
-          [likeJSON.userid, likeJSON.news_id],
+          'SELECT * FROM tbl_comments INNER JOIN tbl_users ON tbl_comments.userid = tbl_users.userid WHERE news_id = ? ORDER BY date_commented ASC',
+          newsID,
           function (error, results) {
             if (error) {
               return reject(error);
@@ -84,19 +82,19 @@ exports.handler = async (event) => {
     };
 
     try {
-      await deleteLikes();
+      const comments = await getComments();
 
       return {
         statusCode: 200,
         body: JSON.stringify({
-          success: true
+          success: true,
+          data: comments
         }),
         headers: {
           'Content-Type': 'application/json'
         }
       };
     } catch (e) {
-      console.log(e);
       return {
         statusCode: 500,
         body: JSON.stringify({

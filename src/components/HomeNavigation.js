@@ -17,7 +17,9 @@ const HomeNavigation = () => {
     e.preventDefault();
     sessionStorage.clear();
     sideBarInstance.close();
-    navigate('/');
+    navigate('/', {
+      replace: true
+    });
   };
 
   return (

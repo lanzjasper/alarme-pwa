@@ -18,8 +18,8 @@ exports.handler = async (event) => {
       report_description: incidentJSON['report_description'],
       report_multimedia: incidentJSON['report_multimedia'],
       report_status: incidentJSON['report_status'],
-      report_longitude: '',
-      report_latitude: '',
+      report_longitude: incidentJSON['longLat'].lng,
+      report_latitude: incidentJSON['longLat'].lat,
       report_turnaroundtime: ''
     };
 

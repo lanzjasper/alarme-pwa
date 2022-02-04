@@ -30,7 +30,8 @@ const ReportSummary = () => {
         subreport_id: state.subreport_id,
         report_description: state.report_description,
         report_multimedia: state.report_multimedia,
-        report_status: state.report_status
+        report_status: state.report_status,
+        longLat: state.longLat
       };
       const response = await axios.post(
         '/.netlify/functions/submit-incident',
@@ -123,7 +124,7 @@ const ReportSummary = () => {
           }}
         >
           <div className="row">
-            <div className="col s12 m6">
+            <div className="col s12">
               <div className="card">
                 <div className="card-content">
                   <span className="card-title" style={styles.titleStyle}>

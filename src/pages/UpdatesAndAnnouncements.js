@@ -4,30 +4,130 @@ import axios from 'axios';
 
 const UpdatesAndAnnouncements = () => {
   const [news, setNews] = useState([]);
+  const [comments, setComments] = useState({});
   const styles = {
     newsDescriptionStyle: {
       wordBreak: 'break-all'
+    },
+    bold: {
+      fontWeight: 'bold'
+    },
+    normalFontWeight: {
+      fontWeight: 'normal'
     }
   };
-  const like = (newsID, e) => {
-    const likeJSON = {
-      userid: sessionStorage.getItem('userid'),
-      news_id: newsID
-    };
-    axios.post('/.netlify/functions/likes', likeJSON).then((res) => {
-      if (res.data.success) {
-        e.target.style.fontWeight = 1000;
-      }
-    });
+  const like = (newsID, e, didCurrentUserLike) => {
+    e.preventDefault();
+
+    if (didCurrentUserLike) {
+      const likeJSON = {
+        userid: sessionStorage.getItem('userid'),
+        news_id: newsID
+      };
+      axios
+        .delete('/.netlify/functions/likes', { data: likeJSON })
+        .then((res) => {
+          if (res.data.success) {
+            e.target.style.fontWeight = 'normal';
+
+            const updatedNews = news.map((value) => {
+              if (newsID === value.news_id) {
+                value.didCurrentUserLike = false;
+                value.likeCount -= 1;
+              }
+
+              return value;
+            });
+            setNews(updatedNews);
+          }
+        });
+    } else {
+      const likeJSON = {
+        userid: sessionStorage.getItem('userid'),
+        news_id: newsID
+      };
+      axios.post('/.netlify/functions/likes', likeJSON).then((res) => {
+        if (res.data.success) {
+          e.target.style.fontWeight = 1000;
+
+          const updatedNews = news.map((value) => {
+            if (newsID === value.news_id) {
+              value.didCurrentUserLike = true;
+              value.likeCount += 1;
+            }
+
+            return value;
+          });
+          setNews(updatedNews);
+        }
+      });
+    }
   };
 
   useEffect(() => {
     axios.get('/.netlify/functions/news').then((res) => {
-      setNews(res.data.data);
+      let news = res.data.data;
+
+      news = news.map((value) => {
+        return {
+          ...{
+            didCurrentUserLike: Boolean(checkIfUserLikedNews(value.likesData)),
+            likeCount: value.likesData.length
+          },
+          ...value
+        };
+      });
+
+      setNews(news);
     });
 
     return () => {};
   }, [setNews]);
+
+  const checkIfUserLikedNews = (likesData) => {
+    return likesData.find(
+      (likeData) =>
+        likeData.userid === parseInt(sessionStorage.getItem('userid'))
+    );
+  };
+
+  const addComment = async (e, newsID) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+
+      if (comments[newsID].trim() === '') return;
+
+      const commentJSON = {
+        userid: sessionStorage.getItem('userid'),
+        news_id: newsID,
+        comment: comments[newsID].trim()
+      };
+      const commentSuccess = await axios.post(
+        '/.netlify/functions/comments',
+        commentJSON
+      );
+
+      if (commentSuccess.data.success) {
+        const newComments = await axios.get('/.netlify/functions/comments', {
+          params: {
+            newsID: newsID
+          }
+        });
+        const newNewsData = news.map((value) => {
+          if (value.news_id === newsID) {
+            value.commentsData = newComments.data.data;
+          }
+
+          return value;
+        });
+
+        comments[newsID] = '';
+
+        setNews(newNewsData);
+        setComments(comments);
+      }
+    }
+  };
 
   return (
     <>
@@ -36,7 +136,7 @@ const UpdatesAndAnnouncements = () => {
         {news.map((_news) => {
           return (
             <div className="row" key={_news.news_id}>
-              <div className="col s12 m6">
+              <div className="col s12">
                 <div className="card grey lighten-4">
                   <div className="card-content black-text">
                     <div className="row valign-wrapper">
@@ -63,7 +163,7 @@ const UpdatesAndAnnouncements = () => {
                       {_news.news_description}
                     </p>
                     <br></br>
-                    <span>Likes: {_news.likesData.length}</span>
+                    <span>Likes: {_news.likeCount}</span>
                     <br></br>
                     <span>Comments: {_news.commentsData.length}</span>
                   </div>
@@ -72,9 +172,14 @@ const UpdatesAndAnnouncements = () => {
                     <a
                       href="#"
                       onClick={(e) => {
-                        like(_news.news_id, e);
+                        like(_news.news_id, e, _news.didCurrentUserLike);
                       }}
                       className="black-text"
+                      style={
+                        checkIfUserLikedNews(_news.likesData)
+                          ? styles.bold
+                          : styles.normalFontWeight
+                      }
                     >
                       Like
                     </a>
@@ -101,12 +206,34 @@ const UpdatesAndAnnouncements = () => {
                               <br />
                               {comment.date_commented}
                             </p>
-                            <a href="#!" className="secondary-content">
-                              <i className="material-icons">grade</i>
-                            </a>
                           </li>
                         );
                       })}
+                      <li className="collection-item avatar grey lighten-4">
+                        <div className="row" style={{ marginBottom: 0 }}>
+                          <div className="input-field col s12">
+                            <textarea
+                              id="newsComment"
+                              className="materialize-textarea"
+                              onKeyDown={(e) => {
+                                addComment(e, _news.news_id);
+                              }}
+                              onChange={(e) => {
+                                setComments({
+                                  ...comments,
+                                  ...{
+                                    [_news.news_id]: e.target.value
+                                  }
+                                });
+                              }}
+                              value={comments[_news.news_id]}
+                            ></textarea>
+                            <label htmlFor="newsComment">
+                              Press enter to add comment
+                            </label>
+                          </div>
+                        </div>
+                      </li>
                     </ul>
                   </div>
                 </div>

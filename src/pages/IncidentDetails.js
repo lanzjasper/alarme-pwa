@@ -1,10 +1,12 @@
 import HomeNavigation from '../components/HomeNavigation';
 import { useLocation, useNavigate } from 'react-router-dom';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import axios from 'axios';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 
 const IncidentDetails = () => {
   const navigate = useNavigate();
+  const mapZoom = 10;
   const { state } = useLocation();
   const radioValue = {
     Fire: [
@@ -51,9 +53,13 @@ const IncidentDetails = () => {
   );
   const [comment, setComment] = useState(state.report_description || '');
   const [attachmentURL, setAttachmentURL] = useState(
-    state.report_multimedia || null
+    state.report_multimedia || ''
   );
   const [isUploading, setIsUploading] = useState(false);
+  const [longLat, setLongLat] = useState({
+    lat: 14.599512,
+    lng: 120.984222
+  });
   const goToRiskRating = () => {
     if (state.operation === 'update') {
       const emergencyIDMapping = {
@@ -70,7 +76,8 @@ const IncidentDetails = () => {
           report_description: comment,
           report_multimedia: attachmentURL,
           report_status: state.report_status,
-          selectedIncident: state.selectedIncident
+          selectedIncident: state.selectedIncident,
+          longLat: longLat
         }
       });
     } else {
@@ -79,7 +86,8 @@ const IncidentDetails = () => {
           selectedIncident: state.selectedIncident,
           subreport_id: reportName,
           report_description: comment,
-          attachmentURL: attachmentURL
+          attachmentURL: attachmentURL,
+          longLat: longLat
         }
       });
     }
@@ -103,10 +111,57 @@ const IncidentDetails = () => {
         setIsUploading(false);
       });
   };
+  const DraggableMarker = () => {
+    const markerRef = useRef(null);
+    const eventHandlers = useMemo(
+      () => ({
+        dragend() {
+          const marker = markerRef.current;
+          if (marker != null) {
+            setLongLat(marker.getLatLng());
+          }
+        }
+      }),
+      []
+    );
+
+    return (
+      <Marker
+        draggable
+        eventHandlers={eventHandlers}
+        position={longLat}
+        ref={markerRef}
+      >
+        <Popup minWidth={90}>
+          <span>Select Incident Location</span>
+        </Popup>
+      </Marker>
+    );
+  };
+  const ChangeView = ({ center, zoom }) => {
+    const map = useMap();
+
+    map.setView(center, zoom);
+
+    return null;
+  };
+
+  const showPosition = (position) => {
+    setLongLat({
+      lat: position.coords.latitude,
+      lng: position.coords.longitude
+    });
+  };
 
   useEffect(() => {
     // eslint-disable-next-line
     M.updateTextFields();
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition);
+    } else {
+      console.log('Geo Location not supported by browser');
+    }
   }, []);
 
   const determineCheckedRadio = (currentValueID, index) => {
@@ -178,17 +233,35 @@ const IncidentDetails = () => {
                 <input className="file-path validate" type="text" />
               </div>
             </div>
-            <button
-              className={`btn btn-large waves-effect waves-light ${
-                isUploading ? 'disabled' : ''
-              }`}
-              type="button"
-              style={{ width: '100%' }}
-              onClick={() => goToRiskRating()}
+            <h6>
+              <b>Select Incident Location</b>
+            </h6>
+            <MapContainer
+              center={longLat}
+              zoom={mapZoom}
+              scrollWheelZoom={true}
+              style={{ height: 500 }}
             >
-              Submit
-              <i className="material-icons right">send</i>
-            </button>
+              <ChangeView center={longLat} zoom={mapZoom} />
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <DraggableMarker />
+            </MapContainer>
+            <div style={{ paddingTop: 30 }}>
+              <button
+                className={`btn btn-large waves-effect waves-light ${
+                  isUploading ? 'disabled' : ''
+                }`}
+                type="button"
+                style={{ width: '100%' }}
+                onClick={() => goToRiskRating()}
+              >
+                Submit
+                <i className="material-icons right">send</i>
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -34,7 +34,9 @@ function App() {
           sessionStorage.setItem(key, value);
         }
 
-        navigate('/home');
+        navigate('/home', {
+          replace: true
+        });
       } else {
         // eslint-disable-next-line
         M.toast({
@@ -54,6 +56,13 @@ function App() {
   };
   const register = () => {
     navigate('/register');
+  };
+  const loginOnEnter = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+
+      login();
+    }
   };
 
   return (
@@ -93,6 +102,7 @@ function App() {
                   onChange={(e) => {
                     setUsername(e.target.value.trim());
                   }}
+                  onKeyDown={loginOnEnter}
                 />
                 <label htmlFor="username">Username</label>
               </div>
@@ -106,6 +116,7 @@ function App() {
                   onChange={(e) => {
                     setPassword(e.target.value.trim());
                   }}
+                  onKeyDown={loginOnEnter}
                 />
                 <label htmlFor="password">Password</label>
               </div>

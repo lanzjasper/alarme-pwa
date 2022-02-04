@@ -22,7 +22,7 @@ exports.handler = async (event) => {
       user_lname: registerDataFromJSON['user_lname'],
       user_mobile: registerDataFromJSON['user_mobile'],
       user_address: registerDataFromJSON['user_address'],
-      user_photo: 'somephotourl',
+      user_photo: registerDataFromJSON['user_photo'],
       user_suffix: '',
       user_sex: registerDataFromJSON['user_sex'],
       user_telephone: registerDataFromJSON['user_telephone'],

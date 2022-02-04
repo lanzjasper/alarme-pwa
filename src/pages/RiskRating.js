@@ -21,7 +21,8 @@ const RiskRating = () => {
         report_description: state.report_description,
         report_multimedia: state.attachmentURL,
         report_status: category,
-        selectedIncident: state.selectedIncident
+        selectedIncident: state.selectedIncident,
+        longLat: state.longLat
       }
     });
   };

@@ -48,7 +48,7 @@ exports.handler = async (event) => {
           const getComments = () => {
             return new Promise((resolve, reject) => {
               connection.query(
-                'SELECT * FROM tbl_comments INNER JOIN tbl_users ON tbl_comments.userid = tbl_users.userid WHERE news_id = ? ORDER BY date_commented DESC',
+                'SELECT * FROM tbl_comments INNER JOIN tbl_users ON tbl_comments.userid = tbl_users.userid WHERE news_id = ? ORDER BY date_commented ASC',
                 _news.news_id,
                 function (error, results) {
                   if (error) {
