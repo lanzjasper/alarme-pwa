@@ -9,7 +9,8 @@
   background-color: #002060;
 }
 
-input:focus {
+input:focus,
+textarea:focus {
   border-bottom: 1px solid #002060 !important;
   box-shadow: 0 1px 0 0 #002060 !important;
 }
@@ -63,4 +64,16 @@ ul.stepper .step.done::before {
 [type='checkbox'].filled-in:checked + span:not(.lever):after {
   border: 2px solid #002060 !important;
   background-color: #002060 !important;
+}
+
+#attachment-upload-incident,
+#attachment-upload-incident:focus,
+#attachment-upload-incident:hover {
+  background-color: #002060 !important;
+}
+
+#incident-attachment {
+  border-bottom: 1px solid #002060;
+  -webkit-box-shadow: 0 1px 0 0 #002060;
+  box-shadow: 0 1px 0 0 #002060;
 }

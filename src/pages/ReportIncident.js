@@ -35,7 +35,7 @@ const ReportIncident = () => {
           }}
         >
           <div
-            className="card-panel teal waves-effect waves-block waves-light"
+            className="card-panel alarme-background waves-effect waves-block waves-light"
             onClick={() => {
               fillUpIncidentDetails('Fire');
             }}
@@ -48,7 +48,7 @@ const ReportIncident = () => {
             </div>
           </div>
           <div
-            className="card-panel teal waves-effect waves-block waves-light"
+            className="card-panel alarme-background waves-effect waves-block waves-light"
             onClick={() => {
               fillUpIncidentDetails('Traffic');
             }}
@@ -61,7 +61,7 @@ const ReportIncident = () => {
             </div>
           </div>
           <div
-            className="card-panel teal waves-effect waves-block waves-light"
+            className="card-panel alarme-background waves-effect waves-block waves-light"
             onClick={() => {
               fillUpIncidentDetails('Public Safety');
             }}
@@ -74,7 +74,7 @@ const ReportIncident = () => {
             </div>
           </div>
           <div
-            className="card-panel teal waves-effect waves-block waves-light"
+            className="card-panel alarme-background waves-effect waves-block waves-light"
             onClick={() => {
               fillUpIncidentDetails('Other Concerns');
             }}

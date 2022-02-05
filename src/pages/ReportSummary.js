@@ -17,7 +17,8 @@ const ReportSummary = () => {
     },
     editButton: {
       float: 'right',
-      lineHeight: '24px'
+      lineHeight: '24px',
+      color: 'white'
     }
   };
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -96,7 +97,8 @@ const ReportSummary = () => {
         selectedIncident: state.selectedIncident,
         subreport_id: state.subreport_id,
         report_description: state.report_description,
-        report_status: state.report_status
+        report_status: state.report_status,
+        longLat: state.longLat
       }
     });
   };
@@ -108,7 +110,8 @@ const ReportSummary = () => {
         report_description: state.report_description,
         report_status: state.report_status,
         report_multimedia: state.report_multimedia,
-        operation: 'update'
+        operation: 'update',
+        longLat: state.longLat
       }
     });
   };

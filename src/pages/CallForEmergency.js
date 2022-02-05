@@ -25,7 +25,7 @@ const CallForEmergency = () => {
           }}
         >
           <div
-            className="card-panel teal waves-effect waves-block waves-light"
+            className="card-panel alarme-background waves-effect waves-block waves-light"
             onClick={() => {
               window.open('tel:23107667');
             }}
@@ -38,7 +38,7 @@ const CallForEmergency = () => {
             </div>
           </div>
           <div
-            className="card-panel teal waves-effect waves-block waves-light"
+            className="card-panel alarme-background waves-effect waves-block waves-light"
             onClick={() => {
               window.open('tel:0285634619');
             }}
@@ -51,7 +51,7 @@ const CallForEmergency = () => {
             </div>
           </div>
           <div
-            className="card-panel teal waves-effect waves-block waves-light"
+            className="card-panel alarme-background waves-effect waves-block waves-light"
             onClick={() => {
               window.open('tel:0285279860');
             }}

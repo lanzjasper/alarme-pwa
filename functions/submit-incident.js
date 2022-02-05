@@ -16,7 +16,9 @@ exports.handler = async (event) => {
       emergency_id: incidentJSON['emergency_id'],
       subreport_id: incidentJSON['subreport_id'],
       report_description: incidentJSON['report_description'],
-      report_multimedia: incidentJSON['report_multimedia'],
+      report_multimedia: incidentJSON['report_multimedia']
+        ? incidentJSON['report_multimedia']
+        : '',
       report_status: incidentJSON['report_status'],
       report_longitude: incidentJSON['longLat'].lng,
       report_latitude: incidentJSON['longLat'].lat,

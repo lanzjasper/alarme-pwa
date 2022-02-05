@@ -138,10 +138,10 @@ const IncidentDetails = () => {
       </Marker>
     );
   };
-  const ChangeView = ({ center, zoom }) => {
+  const ChangeView = ({ center }) => {
     const map = useMap();
 
-    map.setView(center, zoom);
+    map.setView(center);
 
     return null;
   };
@@ -156,8 +156,6 @@ const IncidentDetails = () => {
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(showPosition);
-    } else {
-      console.log('Geo Location not supported by browser');
     }
   }, []);
 
@@ -217,7 +215,10 @@ const IncidentDetails = () => {
               </div>
             </div>
             <div className="file-field input-field">
-              <div className="btn">
+              <div
+                className="btn waves-effect waves-block waves-light"
+                id="attachment-upload-incident"
+              >
                 <span>Attachments</span>
                 <input
                   type="file"
@@ -227,7 +228,11 @@ const IncidentDetails = () => {
                 />
               </div>
               <div className="file-path-wrapper">
-                <input className="file-path validate" type="text" />
+                <input
+                  className="file-path validate"
+                  id="incident-attachment"
+                  type="text"
+                />
               </div>
             </div>
             <h6>
