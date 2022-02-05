@@ -37,10 +37,8 @@ const RegisterPage = () => {
   const [telephoneNumberHasChanged, setTelephoneNumberHasChanged] =
     useState(false);
   const firstNameInputRef = useRef(null);
-  const middleNameInputRef = useRef(null);
   const lastNameInputRef = useRef(null);
   const contactNumberInputRef = useRef(null);
-  const telephoneNumberInputRef = useRef(null);
 
   const [addressStatus, setAddressStatus] = useState('live');
   const [address, setAddress] = useState('');
@@ -181,9 +179,6 @@ const RegisterPage = () => {
   const validateContactNumber = (contactNumber) => {
     return contactNumber.trim() !== '';
   };
-  const validateTelephoneNumber = (telephoneNumber) => {
-    return telephoneNumber.trim() !== '';
-  };
   const validateGender = (gender) => {
     return ['m', 'f'].includes(gender);
   };
@@ -255,28 +250,19 @@ const RegisterPage = () => {
   };
   const goToPersonalAddress = () => {
     const validFirstName = validateName(firstName);
-    const validMiddleName = validateName(middleName);
     const validLastName = validateName(lastName);
     const validGender = validateGender(gender);
     const validContactNumber = validateContactNumber(contactNumber);
-    const validTelephoneNumber = validateTelephoneNumber(telephoneNumber);
 
     if (
       !validFirstName ||
-      !validMiddleName ||
       !validLastName ||
       !validGender ||
-      !validContactNumber ||
-      !validTelephoneNumber
+      !validContactNumber
     ) {
       if (!validFirstName) {
         firstNameInputRef.current.classList.add('invalid');
         setFirstNameHasChanged(true);
-      }
-
-      if (!validMiddleName) {
-        middleNameInputRef.current.classList.add('invalid');
-        setMiddleNameHasChanged(true);
       }
 
       if (!validLastName) {
@@ -292,11 +278,6 @@ const RegisterPage = () => {
         contactNumberInputRef.current.classList.add('invalid');
         setContactNumberHasChanged(true);
       }
-
-      if (!validTelephoneNumber) {
-        telephoneNumberInputRef.current.classList.add('invalid');
-        setTelephoneNumberHasChanged(true);
-      }
     } else {
       stepperInstance.nextStep();
     }
@@ -306,20 +287,22 @@ const RegisterPage = () => {
     const validCity = validateCity(city);
     const validProvince = validateProvince(province);
 
-    if (!validAddress || !validCity || !validProvince) {
-      if (!validAddress) {
-        addressInputRef.current.classList.add('invalid');
-        setAddressHasChanged(true);
-      }
+    if (addressStatus === 'live') {
+      if (!validAddress || !validCity || !validProvince) {
+        if (!validAddress) {
+          addressInputRef.current.classList.add('invalid');
+          setAddressHasChanged(true);
+        }
 
-      if (!validCity) {
-        cityInputRef.current.classList.add('invalid');
-        setCityHasChanged(true);
-      }
+        if (!validCity) {
+          cityInputRef.current.classList.add('invalid');
+          setCityHasChanged(true);
+        }
 
-      if (!validProvince) {
-        provinceInputRef.current.classList.add('invalid');
-        setProvinceHasChanged(true);
+        if (!validProvince) {
+          provinceInputRef.current.classList.add('invalid');
+          setProvinceHasChanged(true);
+        }
       }
     } else {
       if (!hasAgree) {
@@ -379,9 +362,9 @@ const RegisterPage = () => {
     <>
       <nav>
         <div
-          className="nav-wrapper"
+          className="nav-wrapper alarme-background"
           style={{
-            marginLeft: 10
+            paddingLeft: 10
           }}
         >
           <Link to="/" className="brand-logo">
@@ -395,505 +378,493 @@ const RegisterPage = () => {
         </div>
       </nav>
       <div className="container">
-        <div className="col s12">
-          <div className="row">
-            <h1>Register to AlarMe</h1>
+        <div className="row">
+          <div className="col s12">
+            <h5>Register to AlarMe</h5>
           </div>
-          <ul className="stepper linear">
-            <li className="step active" key={'basicAccountCredentials'}>
-              <div className="step-title waves-effect">
-                Basic Account Credentials
-              </div>
-              <div className="step-content">
-                <div className="row">
-                  <div className="input-field">
-                    <input
-                      id="emailAddress"
-                      type="email"
-                      className={[
-                        !emailAddressHasChanged
-                          ? ''
-                          : isValidEmail.valid
-                          ? 'valid'
-                          : 'invalid'
-                      ]}
-                      value={emailAddress}
-                      onChange={(e) => {
-                        setEmailAddress(e.target.value.trim());
-                        setEmailAddressHasChanged(true);
-                      }}
-                      ref={emailAddressInputRef}
-                    />
-                    <label htmlFor="emailAddress">Email Address</label>
-                    {emailAddressHasChanged && !isValidEmail.valid && (
-                      <span
-                        className="helper-text"
-                        data-error={isValidEmail.message}
-                      ></span>
-                    )}
-                  </div>
+          <div className="col s12">
+            <ul className="stepper linear">
+              <li className="step active" key={'basicAccountCredentials'}>
+                <div className="step-title waves-effect">
+                  Basic Account Credentials
                 </div>
-                <div className="row">
-                  <div className="input-field">
-                    <input
-                      id="username"
-                      type="text"
-                      className={[
-                        !usernameHasChanged
-                          ? ''
-                          : isValidUsername.valid
-                          ? 'valid'
-                          : 'invalid'
-                      ]}
-                      value={username}
-                      onChange={(e) => {
-                        setUsername(e.target.value.trim());
-                        setUsernameHasChanged(true);
-                      }}
-                      ref={usernameInputRef}
-                    />
-                    <label htmlFor="username">Username</label>
-                    {usernameHasChanged && !isValidUsername.valid && (
-                      <span
-                        className="helper-text"
-                        data-error={isValidUsername.message}
-                      ></span>
-                    )}
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="input-field">
-                    <input
-                      id="password"
-                      type="password"
-                      className={[
-                        !passwordHasChanged
-                          ? ''
-                          : validatePassword(password)
-                          ? 'valid'
-                          : 'invalid'
-                      ]}
-                      value={password}
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                        setPasswordHasChanged(true);
-                      }}
-                      ref={passwordInputRef}
-                    />
-                    <label htmlFor="password">Password</label>
-                    {passwordHasChanged && !validatePassword(password) && (
-                      <span
-                        className="helper-text"
-                        data-error="Invalid password!"
-                      ></span>
-                    )}
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="input-field">
-                    <input
-                      id="confirmPassword"
-                      type="password"
-                      className={[
-                        !confirmPasswordHasChanged
-                          ? ''
-                          : validateConfirmPassword(password, confirmPassword)
-                          ? 'valid'
-                          : 'invalid'
-                      ]}
-                      value={confirmPassword}
-                      onChange={(e) => {
-                        setConfirmPassword(e.target.value);
-                        setConfirmPasswordHasChanged(true);
-                      }}
-                      ref={confirmPasswordInputRef}
-                    />
-                    <label htmlFor="confirmPassword">Confirm Password</label>
-                    {confirmPasswordHasChanged &&
-                      !validateConfirmPassword(password, confirmPassword) && (
+                <div className="step-content">
+                  <div className="row">
+                    <div className="input-field">
+                      <input
+                        id="emailAddress"
+                        type="email"
+                        className={[
+                          !emailAddressHasChanged
+                            ? ''
+                            : isValidEmail.valid
+                            ? 'valid'
+                            : 'invalid'
+                        ]}
+                        value={emailAddress}
+                        onChange={(e) => {
+                          setEmailAddress(e.target.value.trim());
+                          setEmailAddressHasChanged(true);
+                        }}
+                        ref={emailAddressInputRef}
+                      />
+                      <label htmlFor="emailAddress">Email Address</label>
+                      {emailAddressHasChanged && !isValidEmail.valid && (
                         <span
                           className="helper-text"
-                          data-error="Password does not match!"
+                          data-error={isValidEmail.message}
                         ></span>
                       )}
+                    </div>
                   </div>
-                </div>
-                <div className="step-actions">
-                  <button
-                    className="waves-effect waves-dark btn"
-                    onClick={goToPersonalInformation}
-                    type="button"
-                  >
-                    NEXT
-                  </button>
-                </div>
-              </div>
-            </li>
-            <li className="step" key={'personalInformation'}>
-              <div className="step-title waves-effect">
-                Personal Information
-              </div>
-              <div className="step-content">
-                <div className="row">
-                  <div className="input-field">
-                    <input
-                      id="firstName"
-                      type="text"
-                      value={firstName}
-                      className={[
-                        !firstNameHasChanged
-                          ? ''
-                          : validateName(firstName)
-                          ? 'valid'
-                          : 'invalid'
-                      ]}
-                      onChange={(e) => {
-                        setFirstName(e.target.value);
-                        setFirstNameHasChanged(true);
-                      }}
-                      ref={firstNameInputRef}
-                    />
-                    <label htmlFor="firstName">First Name</label>
-                    {firstNameHasChanged && !validateName(firstName) && (
-                      <span
-                        className="helper-text"
-                        data-error="First name cannot be empty!"
-                      ></span>
-                    )}
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="input-field">
-                    <input
-                      id="middleName"
-                      type="text"
-                      value={middleName}
-                      className={[
-                        !middleNameHasChanged
-                          ? ''
-                          : validateName(middleName)
-                          ? 'valid'
-                          : 'invalid'
-                      ]}
-                      onChange={(e) => {
-                        setMiddleName(e.target.value);
-                        setMiddleNameHasChanged(true);
-                      }}
-                      ref={middleNameInputRef}
-                    />
-                    <label htmlFor="middleName">Middle Name</label>
-                    {middleNameHasChanged && !validateName(middleName) && (
-                      <span
-                        className="helper-text"
-                        data-error="Middle name cannot be empty!"
-                      ></span>
-                    )}
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="input-field">
-                    <input
-                      id="lastName"
-                      type="text"
-                      value={lastName}
-                      className={[
-                        !lastNameHasChanged
-                          ? ''
-                          : validateName(lastName)
-                          ? 'valid'
-                          : 'invalid'
-                      ]}
-                      onChange={(e) => {
-                        setLastName(e.target.value);
-                        setLastNameHasChanged(true);
-                      }}
-                      ref={lastNameInputRef}
-                    />
-                    <label htmlFor="lastName">Last Name</label>
-                    {lastNameHasChanged && !validateName(lastName) && (
-                      <span
-                        className="helper-text"
-                        data-error="Last name cannot be empty!"
-                      ></span>
-                    )}
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="col s3 m2" style={{ paddingLeft: 0 }}>
-                    <label>
+                  <div className="row">
+                    <div className="input-field">
                       <input
-                        className="with-gap"
-                        name="gender"
-                        type="radio"
-                        value={'m'}
+                        id="username"
+                        type="text"
+                        className={[
+                          !usernameHasChanged
+                            ? ''
+                            : isValidUsername.valid
+                            ? 'valid'
+                            : 'invalid'
+                        ]}
+                        value={username}
                         onChange={(e) => {
-                          setGender(e.target.value);
+                          setUsername(e.target.value.trim());
+                          setUsernameHasChanged(true);
                         }}
+                        ref={usernameInputRef}
                       />
-                      <span>Male</span>
-                    </label>
+                      <label htmlFor="username">Username</label>
+                      {usernameHasChanged && !isValidUsername.valid && (
+                        <span
+                          className="helper-text"
+                          data-error={isValidUsername.message}
+                        ></span>
+                      )}
+                    </div>
                   </div>
-                  <div className="col s3 m2">
-                    <label>
+                  <div className="row">
+                    <div className="input-field">
                       <input
-                        className="with-gap"
-                        name="gender"
-                        type="radio"
-                        value={'f'}
+                        id="password"
+                        type="password"
+                        className={[
+                          !passwordHasChanged
+                            ? ''
+                            : validatePassword(password)
+                            ? 'valid'
+                            : 'invalid'
+                        ]}
+                        value={password}
                         onChange={(e) => {
-                          setGender(e.target.value);
+                          setPassword(e.target.value);
+                          setPasswordHasChanged(true);
                         }}
+                        ref={passwordInputRef}
                       />
-                      <span>Female</span>
-                    </label>
+                      <label htmlFor="password">Password</label>
+                      {passwordHasChanged && !validatePassword(password) && (
+                        <span
+                          className="helper-text"
+                          data-error="Invalid password!"
+                        ></span>
+                      )}
+                    </div>
                   </div>
-                </div>
-                <div className="row">
-                  {genderHasChanged && !validateGender(gender) && (
-                    <span
-                      className="helper-text"
-                      data-error="Gender cannot be empty!"
-                      style={{
-                        color: '#F44336',
-                        fontSize: 12
-                      }}
+                  <div className="row">
+                    <div className="input-field">
+                      <input
+                        id="confirmPassword"
+                        type="password"
+                        className={[
+                          !confirmPasswordHasChanged
+                            ? ''
+                            : validateConfirmPassword(password, confirmPassword)
+                            ? 'valid'
+                            : 'invalid'
+                        ]}
+                        value={confirmPassword}
+                        onChange={(e) => {
+                          setConfirmPassword(e.target.value);
+                          setConfirmPasswordHasChanged(true);
+                        }}
+                        ref={confirmPasswordInputRef}
+                      />
+                      <label htmlFor="confirmPassword">Confirm Password</label>
+                      {confirmPasswordHasChanged &&
+                        !validateConfirmPassword(password, confirmPassword) && (
+                          <span
+                            className="helper-text"
+                            data-error="Password does not match!"
+                          ></span>
+                        )}
+                    </div>
+                  </div>
+                  <div className="step-actions">
+                    <button
+                      className="waves-effect waves-dark btn"
+                      onClick={goToPersonalInformation}
+                      type="button"
                     >
-                      Gender cannot be empty!
-                    </span>
+                      NEXT
+                    </button>
+                  </div>
+                </div>
+              </li>
+              <li className="step" key={'personalInformation'}>
+                <div className="step-title waves-effect">
+                  Personal Information
+                </div>
+                <div className="step-content">
+                  <div className="row">
+                    <div className="input-field">
+                      <input
+                        id="firstName"
+                        type="text"
+                        value={firstName}
+                        className={[
+                          !firstNameHasChanged
+                            ? ''
+                            : validateName(firstName)
+                            ? 'valid'
+                            : 'invalid'
+                        ]}
+                        onChange={(e) => {
+                          setFirstName(e.target.value);
+                          setFirstNameHasChanged(true);
+                        }}
+                        ref={firstNameInputRef}
+                      />
+                      <label htmlFor="firstName">First Name</label>
+                      {firstNameHasChanged && !validateName(firstName) && (
+                        <span
+                          className="helper-text"
+                          data-error="First name cannot be empty!"
+                        ></span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="input-field">
+                      <input
+                        id="middleName"
+                        type="text"
+                        value={middleName}
+                        className={[!middleNameHasChanged ? '' : 'valid']}
+                        onChange={(e) => {
+                          setMiddleName(e.target.value);
+                          setMiddleNameHasChanged(true);
+                        }}
+                      />
+                      <label htmlFor="middleName">Middle Name (Optional)</label>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="input-field">
+                      <input
+                        id="lastName"
+                        type="text"
+                        value={lastName}
+                        className={[
+                          !lastNameHasChanged
+                            ? ''
+                            : validateName(lastName)
+                            ? 'valid'
+                            : 'invalid'
+                        ]}
+                        onChange={(e) => {
+                          setLastName(e.target.value);
+                          setLastNameHasChanged(true);
+                        }}
+                        ref={lastNameInputRef}
+                      />
+                      <label htmlFor="lastName">Last Name</label>
+                      {lastNameHasChanged && !validateName(lastName) && (
+                        <span
+                          className="helper-text"
+                          data-error="Last name cannot be empty!"
+                        ></span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col s3 m2" style={{ paddingLeft: 0 }}>
+                      <label>
+                        <input
+                          className="with-gap"
+                          name="gender"
+                          type="radio"
+                          value={'m'}
+                          onChange={(e) => {
+                            setGender(e.target.value);
+                          }}
+                        />
+                        <span>Male</span>
+                      </label>
+                    </div>
+                    <div className="col s3 m2">
+                      <label>
+                        <input
+                          className="with-gap"
+                          name="gender"
+                          type="radio"
+                          value={'f'}
+                          onChange={(e) => {
+                            setGender(e.target.value);
+                          }}
+                        />
+                        <span>Female</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div className="row">
+                    {genderHasChanged && !validateGender(gender) && (
+                      <span
+                        className="helper-text"
+                        data-error="Gender cannot be empty!"
+                        style={{
+                          color: '#F44336',
+                          fontSize: 12
+                        }}
+                      >
+                        Gender cannot be empty!
+                      </span>
+                    )}
+                  </div>
+                  <div className="row">
+                    <div className="input-field">
+                      <input
+                        id="contactNumber"
+                        type="text"
+                        value={contactNumber}
+                        className={[
+                          !contactNumberHasChanged
+                            ? ''
+                            : validateContactNumber(contactNumber)
+                            ? 'valid'
+                            : 'invalid'
+                        ]}
+                        onChange={(e) => {
+                          setContactNumber(e.target.value);
+                          setContactNumberHasChanged(true);
+                        }}
+                        ref={contactNumberInputRef}
+                      />
+                      <label htmlFor="contactNumber">Contact Number</label>
+                      {contactNumberHasChanged &&
+                        !validateContactNumber(contactNumber) && (
+                          <span
+                            className="helper-text"
+                            data-error="Contact number cannot be empty!"
+                          ></span>
+                        )}
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="input-field">
+                      <input
+                        id="telephoneNumber"
+                        type="text"
+                        value={telephoneNumber}
+                        className={[!telephoneNumberHasChanged ? '' : 'valid']}
+                        onChange={(e) => {
+                          setTelephoneNumber(e.target.value);
+                          setTelephoneNumberHasChanged(true);
+                        }}
+                      />
+                      <label htmlFor="telephoneNumber">
+                        Telephone Number (Optional)
+                      </label>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="file-field input-field">
+                      <div className="btn alarme-background">
+                        <span>Baranggay Certificate / Any ID</span>
+                        <input
+                          type="file"
+                          onChange={(e) => {
+                            uploadImage(e.target.files[0]);
+                          }}
+                        />
+                      </div>
+                      <div className="file-path-wrapper" id="register-upload">
+                        <input className="file-path validate" type="text" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="step-actions">
+                    <button
+                      className="waves-effect waves-dark btn back-button-stepper"
+                      onClick={() => stepperInstance.prevStep()}
+                      type="button"
+                    >
+                      BACK
+                    </button>
+                    <button
+                      className={`waves-effect waves-dark btn ${
+                        isUploading ? 'disabled' : ''
+                      }`}
+                      onClick={goToPersonalAddress}
+                      type="button"
+                    >
+                      CONTINUE
+                    </button>
+                  </div>
+                </div>
+              </li>
+              <li className="step" key={'personalAddress'}>
+                <div className="step-title waves-effect">Personal Address</div>
+                <div className="step-content">
+                  <div className="row">
+                    <div className="input-field">
+                      <select
+                        onChange={(e) => {
+                          setAddressStatus(e.target.value);
+                        }}
+                        value={addressStatus}
+                      >
+                        <option value="live">I live in the baranggay</option>
+                        <option value="guest">
+                          I am a guest in the baranggay
+                        </option>
+                      </select>
+                      <label>Status</label>
+                    </div>
+                  </div>
+                  {addressStatus === 'live' && (
+                    <>
+                      <div className="row">
+                        <div className="input-field">
+                          <input
+                            id="houseNoStreetName"
+                            type="text"
+                            value={address}
+                            className={[
+                              !addressHasChanged
+                                ? ''
+                                : validateAddress(address)
+                                ? 'valid'
+                                : 'invalid'
+                            ]}
+                            onChange={(e) => {
+                              setAddress(e.target.value);
+                              setAddressHasChanged(true);
+                            }}
+                            ref={addressInputRef}
+                          />
+                          <label htmlFor="houseNoStreetName">
+                            House No. Street Name
+                          </label>
+                          {addressHasChanged && !validateAddress(address) && (
+                            <span
+                              className="helper-text"
+                              data-error="Address cannot be empty!"
+                            ></span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="input-field">
+                          <input
+                            id="city"
+                            type="text"
+                            value={city}
+                            className={[
+                              !cityHasChanged
+                                ? ''
+                                : validateCity(city)
+                                ? 'valid'
+                                : 'invalid'
+                            ]}
+                            onChange={(e) => {
+                              setCity(e.target.value);
+                              setCityHasChanged(true);
+                            }}
+                            ref={cityInputRef}
+                          />
+                          <label htmlFor="city">City</label>
+                          {cityHasChanged && !validateCity(city) && (
+                            <span
+                              className="helper-text"
+                              data-error="City cannot be empty!"
+                            ></span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="input-field">
+                          <input
+                            id="province"
+                            type="text"
+                            value={province}
+                            className={[
+                              !provinceHasChanged
+                                ? ''
+                                : validateProvince(province)
+                                ? 'valid'
+                                : 'invalid'
+                            ]}
+                            onChange={(e) => {
+                              setProvince(e.target.value);
+                              setProvinceHasChanged(true);
+                            }}
+                            ref={provinceInputRef}
+                          />
+                          <label htmlFor="province">Province</label>
+                          {provinceHasChanged &&
+                            !validateProvince(province) && (
+                              <span
+                                className="helper-text"
+                                data-error="Province cannot be empty!"
+                              ></span>
+                            )}
+                        </div>
+                      </div>
+                    </>
                   )}
-                </div>
-                <div className="row">
-                  <div className="input-field">
-                    <input
-                      id="contactNumber"
-                      type="text"
-                      value={contactNumber}
-                      className={[
-                        !contactNumberHasChanged
-                          ? ''
-                          : validateContactNumber(contactNumber)
-                          ? 'valid'
-                          : 'invalid'
-                      ]}
-                      onChange={(e) => {
-                        setContactNumber(e.target.value);
-                        setContactNumberHasChanged(true);
-                      }}
-                      ref={contactNumberInputRef}
-                    />
-                    <label htmlFor="contactNumber">Contact Number</label>
-                    {contactNumberHasChanged &&
-                      !validateContactNumber(contactNumber) && (
-                        <span
-                          className="helper-text"
-                          data-error="Contact number cannot be empty!"
-                        ></span>
-                      )}
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="input-field">
-                    <input
-                      id="telephoneNumber"
-                      type="text"
-                      value={telephoneNumber}
-                      className={[
-                        !telephoneNumberHasChanged
-                          ? ''
-                          : validateTelephoneNumber(telephoneNumber)
-                          ? 'valid'
-                          : 'invalid'
-                      ]}
-                      onChange={(e) => {
-                        setTelephoneNumber(e.target.value);
-                        setTelephoneNumberHasChanged(true);
-                      }}
-                      ref={telephoneNumberInputRef}
-                    />
-                    <label htmlFor="telephoneNumber">Telephone Number</label>
-                    {telephoneNumberHasChanged &&
-                      !validateTelephoneNumber(telephoneNumber) && (
-                        <span
-                          className="helper-text"
-                          data-error="Telephone number cannot be empty!"
-                        ></span>
-                      )}
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="file-field input-field">
-                    <div className="btn">
-                      <span>Photo</span>
+                  <div className="row">
+                    <label>
                       <input
-                        type="file"
+                        type="checkbox"
+                        className="filled-in"
                         onChange={(e) => {
-                          uploadImage(e.target.files[0]);
+                          setHasAgree(!hasAgree);
                         }}
                       />
-                    </div>
-                    <div className="file-path-wrapper">
-                      <input className="file-path validate" type="text" />
-                    </div>
-                  </div>
-                </div>
-                <div className="step-actions">
-                  <button
-                    className="waves-effect waves-dark btn light-blue accent-4"
-                    onClick={() => stepperInstance.prevStep()}
-                    type="button"
-                  >
-                    BACK
-                  </button>
-                  <button
-                    className={`waves-effect waves-dark btn ${
-                      isUploading ? 'disabled' : ''
-                    }`}
-                    onClick={goToPersonalAddress}
-                    type="button"
-                  >
-                    CONTINUE
-                  </button>
-                </div>
-              </div>
-            </li>
-            <li className="step" key={'personalAddress'}>
-              <div className="step-title waves-effect">Personal Address</div>
-              <div className="step-content">
-                <div className="row">
-                  <div className="input-field">
-                    <select
-                      onChange={(e) => {
-                        setAddressStatus(e.target.value);
-                      }}
-                      value={addressStatus}
-                    >
-                      <option value="live">I live in the baranggay</option>
-                      <option value="guest">
-                        I am a guest in the baranggay
-                      </option>
-                    </select>
-                    <label>Status</label>
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="input-field">
-                    <input
-                      id="houseNoStreetName"
-                      type="text"
-                      value={address}
-                      className={[
-                        !addressHasChanged
-                          ? ''
-                          : validateAddress(address)
-                          ? 'valid'
-                          : 'invalid'
-                      ]}
-                      onChange={(e) => {
-                        setAddress(e.target.value);
-                        setAddressHasChanged(true);
-                      }}
-                      ref={addressInputRef}
-                    />
-                    <label htmlFor="houseNoStreetName">
-                      House No. Street Name
+                      <span>
+                        I have read and agreed to the{' '}
+                        <a href="/terms-and-conditions" target={'_blank'}>
+                          Terms and Conditions
+                        </a>
+                        .
+                      </span>
                     </label>
-                    {addressHasChanged && !validateAddress(address) && (
-                      <span
-                        className="helper-text"
-                        data-error="Address cannot be empty!"
-                      ></span>
-                    )}
+                  </div>
+                  <div className="step-actions">
+                    <button
+                      className="waves-effect waves-dark btn back-button-stepper"
+                      onClick={() => stepperInstance.prevStep()}
+                      type="button"
+                    >
+                      BACK
+                    </button>
+                    <button
+                      className={`waves-effect waves-dark btn ${
+                        isRegistering ? 'disabled' : ''
+                      }`}
+                      onClick={() => register()}
+                      type="button"
+                    >
+                      REGISTER
+                    </button>
                   </div>
                 </div>
-                <div className="row">
-                  <div className="input-field">
-                    <input
-                      id="city"
-                      type="text"
-                      value={city}
-                      className={[
-                        !cityHasChanged
-                          ? ''
-                          : validateCity(city)
-                          ? 'valid'
-                          : 'invalid'
-                      ]}
-                      onChange={(e) => {
-                        setCity(e.target.value);
-                        setCityHasChanged(true);
-                      }}
-                      ref={cityInputRef}
-                    />
-                    <label htmlFor="city">City</label>
-                    {cityHasChanged && !validateCity(city) && (
-                      <span
-                        className="helper-text"
-                        data-error="City cannot be empty!"
-                      ></span>
-                    )}
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="input-field">
-                    <input
-                      id="province"
-                      type="text"
-                      value={province}
-                      className={[
-                        !provinceHasChanged
-                          ? ''
-                          : validateProvince(province)
-                          ? 'valid'
-                          : 'invalid'
-                      ]}
-                      onChange={(e) => {
-                        setProvince(e.target.value);
-                        setProvinceHasChanged(true);
-                      }}
-                      ref={provinceInputRef}
-                    />
-                    <label htmlFor="province">Province</label>
-                    {provinceHasChanged && !validateProvince(province) && (
-                      <span
-                        className="helper-text"
-                        data-error="Province cannot be empty!"
-                      ></span>
-                    )}
-                  </div>
-                </div>
-                <div className="row">
-                  <label>
-                    <input
-                      type="checkbox"
-                      className="filled-in"
-                      onChange={(e) => {
-                        setHasAgree(!hasAgree);
-                      }}
-                    />
-                    <span>I have read and agreed to all the shit.</span>
-                  </label>
-                </div>
-                <div className="step-actions">
-                  <button
-                    className="waves-effect waves-dark btn light-blue accent-4"
-                    onClick={() => stepperInstance.prevStep()}
-                    type="button"
-                  >
-                    BACK
-                  </button>
-                  <button
-                    className={`waves-effect waves-dark btn ${
-                      isRegistering ? 'disabled' : ''
-                    }`}
-                    onClick={() => register()}
-                    type="button"
-                  >
-                    REGISTER
-                  </button>
-                </div>
-              </div>
-            </li>
-          </ul>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </>

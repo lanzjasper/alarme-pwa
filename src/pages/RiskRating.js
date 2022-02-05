@@ -30,31 +30,31 @@ const RiskRating = () => {
   const categories = [
     {
       name: 'Category 5 - Minor',
-      note: 'Conditions that are non-urgent',
+      note: 'Less urgent incidents.',
       textColor: 'blue-text',
       value: 5
     },
     {
       name: 'Category 4 - Significant',
-      note: 'Conditions that relate to resident distress or potential complications',
+      note: 'Potential serious condition, situational urgency complex case, resident distress, or potential complication.',
       textColor: 'green-text',
       value: 4
     },
     {
       name: 'Category 3 - Serious',
-      note: 'Serious conditions that require emergency intervention',
+      note: 'Potential life threatening , situational urgency, or severe pain that requires emergency intervention.',
       textColor: 'yellow-text',
       value: 3
     },
     {
       name: 'Category 2 - Major',
-      note: 'Conditions that are a potential threat to life, limb or function',
+      note: 'Imminently life threatening incidents, time sensitive treatment needed, or severe pain.',
       textColor: 'orange-text',
       value: 2
     },
     {
       name: 'Category 1 - Fatal',
-      note: 'Conditions that are threats to life or limb',
+      note: 'Life threatening conditions.',
       textColor: 'red-text',
       value: 1
     }

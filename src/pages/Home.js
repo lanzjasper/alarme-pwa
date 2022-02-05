@@ -29,7 +29,7 @@ const Home = () => {
         >
           <div className="col s12">
             <div
-              className="card-panel teal waves-effect waves-block waves-light"
+              className="card-panel alarme-background waves-effect waves-block waves-light"
               onClick={() => navigate('/call-emergency')}
             >
               <div style={styles.titleStyle} className="white-text">
@@ -42,7 +42,7 @@ const Home = () => {
           </div>
           <div className="col s12">
             <div
-              className="card-panel teal waves-effect waves-block waves-light"
+              className="card-panel alarme-background waves-effect waves-block waves-light"
               onClick={() => navigate('/report-incident')}
             >
               <div style={styles.titleStyle} className="white-text">
@@ -55,13 +55,26 @@ const Home = () => {
           </div>
           <div className="col s12">
             <div
-              className="card-panel teal waves-effect waves-block waves-light"
+              className="card-panel alarme-background waves-effect waves-block waves-light"
               onClick={() => navigate('/updates-and-announcements ')}
             >
               <div style={styles.titleStyle} className="white-text">
                 <span style={{ marginRight: 5 }}>Updates and Announcement</span>
                 <span className="material-icons" style={styles.iconStyle}>
                   campaign
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="col s12">
+            <div
+              className="card-panel alarme-background waves-effect waves-block waves-light"
+              onClick={() => navigate('/notifications ')}
+            >
+              <div style={styles.titleStyle} className="white-text">
+                <span style={{ marginRight: 5 }}>Notifications</span>
+                <span className="material-icons" style={styles.iconStyle}>
+                  notifications
                 </span>
               </div>
             </div>

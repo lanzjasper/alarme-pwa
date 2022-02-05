@@ -1,0 +1,66 @@
+.center-loader-container {
+  display: flex;
+  justify-content: center;
+  height: calc(100vh - 64px);
+  align-items: center;
+}
+
+.alarme-background {
+  background-color: #002060;
+}
+
+input:focus {
+  border-bottom: 1px solid #002060 !important;
+  box-shadow: 0 1px 0 0 #002060 !important;
+}
+
+label.active {
+  color: #002060 !important;
+}
+
+button {
+  background-color: #002060 !important;
+}
+
+.toast {
+  background-color: #002060 !important;
+}
+
+[type='radio'].with-gap:checked + span:before {
+  border: 2px solid #002060;
+}
+
+[type='radio']:checked + span:after,
+[type='radio'].with-gap:checked + span:after {
+  background-color: #002060;
+}
+
+[type='radio']:checked + span:after,
+[type='radio'].with-gap:checked + span:before,
+[type='radio'].with-gap:checked + span:after {
+  border: 2px solid #002060;
+}
+
+#register-upload {
+  overflow: visible;
+  padding-left: 0;
+}
+
+ul.stepper .step.active::before,
+ul.stepper .step.done::before {
+  background-color: #002060 !important;
+}
+
+.back-button-stepper {
+  background-color: #8c9eff !important;
+}
+
+.dropdown-content li > a,
+.dropdown-content li > span {
+  color: #002060 !important;
+}
+
+[type='checkbox'].filled-in:checked + span:not(.lever):after {
+  border: 2px solid #002060 !important;
+  background-color: #002060 !important;
+}

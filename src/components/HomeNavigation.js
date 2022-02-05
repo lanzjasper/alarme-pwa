@@ -25,7 +25,7 @@ const HomeNavigation = () => {
   return (
     <>
       <nav>
-        <div className="nav-wrapper">
+        <div className="nav-wrapper alarme-background">
           <Link to="/home" className="brand-logo">
             AlarMe
           </Link>

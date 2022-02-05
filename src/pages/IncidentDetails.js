@@ -154,9 +154,6 @@ const IncidentDetails = () => {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line
-    M.updateTextFields();
-
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(showPosition);
     } else {

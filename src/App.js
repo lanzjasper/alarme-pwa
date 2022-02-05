@@ -69,9 +69,9 @@ function App() {
     <>
       <nav>
         <div
-          className="nav-wrapper"
+          className="nav-wrapper alarme-background"
           style={{
-            marginLeft: 10
+            paddingLeft: 10
           }}
         >
           <Link to="/" className="brand-logo">
