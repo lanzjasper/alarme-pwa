@@ -114,6 +114,7 @@ const Notifications = () => {
                       )}
                     </div>
                     <div className="card-action">
+                      {/* eslint-disable-next-line */}
                       <a href="#">Rate</a>
                     </div>
                   </div>
