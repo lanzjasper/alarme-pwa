@@ -1,6 +1,6 @@
 import HomeNavigation from '../components/HomeNavigation';
 import { useLocation, useNavigate } from 'react-router-dom';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const ReportSummary = () => {
@@ -21,7 +21,11 @@ const ReportSummary = () => {
       color: 'white'
     }
   };
+  const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [submittedReportID, setSubmittedReportID] = useState('');
+  const [timeOutReference, setTimeOutReference] = useState(null);
   const submitAll = async () => {
     try {
       setIsSubmitting(true);
@@ -42,19 +46,23 @@ const ReportSummary = () => {
         // eslint-disable-next-line
         M.toast({
           html: 'Submit report success!',
-          displayLength: 3000
+          displayLength: 2000
         });
-        setTimeout(() => {
-          navigate('/home');
-        }, 3000);
+        setSubmitted(true);
+        setSubmittedReportID(response.data.reportID);
+        setTimeOutReference(
+          setTimeout(() => {
+            navigate('/home');
+          }, 90000)
+        );
       } else {
         // eslint-disable-next-line
         M.toast({
           html: 'Submit report failed!',
           displayLength: 2000
         });
+        setIsSubmitting(false);
       }
-      setIsSubmitting(false);
     } catch (e) {
       setIsSubmitting(false);
       // eslint-disable-next-line
@@ -115,6 +123,44 @@ const ReportSummary = () => {
       }
     });
   };
+  const cancelReport = (e) => {
+    e.preventDefault();
+
+    axios
+      .put('/.netlify/functions/submit-incident', {
+        report_status_after_submit: 'cancelled',
+        report_id: submittedReportID
+      })
+      .then((res) => {
+        setIsCancelling(true);
+
+        if (res.data.success) {
+          // eslint-disable-next-line
+          M.toast({ html: 'Cancel success!', displayLength: 2000 });
+
+          setTimeOutReference(
+            setTimeout(() => {
+              navigate('/home');
+            }, 2000)
+          );
+        } else {
+          setIsCancelling(false);
+          // eslint-disable-next-line
+          M.toast({ html: 'Cancel failed!', displayLength: 2000 });
+        }
+      })
+      .catch((e) => {
+        setIsCancelling(false);
+        // eslint-disable-next-line
+        M.toast({ html: 'Cancel failed!', displayLength: 2000 });
+      });
+  };
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(timeOutReference);
+    };
+  }, [timeOutReference]);
 
   return (
     <>
@@ -133,7 +179,9 @@ const ReportSummary = () => {
                   <span className="card-title" style={styles.titleStyle}>
                     Report Category
                     <button
-                      className="waves-effect waves-teal btn-flat"
+                      className={`waves-effect waves-teal btn-flat ${
+                        isSubmitting ? 'disabled' : ''
+                      }`}
                       type="button"
                       style={styles.editButton}
                       onClick={() => editIncidentDetails()}
@@ -147,7 +195,9 @@ const ReportSummary = () => {
                   <span className="card-title" style={styles.titleStyle}>
                     Report Description
                     <button
-                      className="waves-effect waves-teal btn-flat"
+                      className={`waves-effect waves-teal btn-flat ${
+                        isSubmitting ? 'disabled' : ''
+                      }`}
                       type="button"
                       style={styles.editButton}
                       onClick={() => editIncidentDetails()}
@@ -161,7 +211,9 @@ const ReportSummary = () => {
                       <span className="card-title" style={styles.titleStyle}>
                         Image
                         <button
-                          className="waves-effect waves-teal btn-flat"
+                          className={`waves-effect waves-teal btn-flat ${
+                            isSubmitting ? 'disabled' : ''
+                          }`}
                           type="button"
                           style={styles.editButton}
                           onClick={() => editIncidentDetails()}
@@ -181,7 +233,9 @@ const ReportSummary = () => {
                   <span className="card-title" style={styles.titleStyle}>
                     Risk Rate
                     <button
-                      className="waves-effect waves-teal btn-flat"
+                      className={`waves-effect waves-teal btn-flat ${
+                        isSubmitting ? 'disabled' : ''
+                      }`}
                       type="button"
                       style={styles.editButton}
                       onClick={() => editCategory()}
@@ -208,6 +262,24 @@ const ReportSummary = () => {
                 <i className="material-icons right">send</i>
               </button>
             </div>
+            {submitted && (
+              <div
+                className="col s12"
+                style={{ paddingTop: 20, textAlign: 'center' }}
+              >
+                <h4>Cancel Report</h4>
+                {/* eslint-disable-next-line */}
+                <a
+                  className={`btn-floating btn-large waves-effect waves-light red pulse ${
+                    isCancelling ? 'disabled' : ''
+                  }`}
+                  href="#"
+                  onClick={cancelReport}
+                >
+                  <i className="material-icons large">close</i>
+                </a>
+              </div>
+            )}
           </div>
         </div>
       </div>

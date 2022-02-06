@@ -15,6 +15,7 @@ import ReportSummary from './pages/ReportSummary';
 import UpdatesAndAnnouncements from './pages/UpdatesAndAnnouncements';
 import Notifications from './pages/Notifications';
 import TermsAndConditions from './pages/TermsAndConditions';
+import UpdateIncidentCategory from './pages/UpdateIncidentCategory';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -34,6 +35,7 @@ ReactDOM.render(
         />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+        <Route path="/update-incident" element={<UpdateIncidentCategory />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,

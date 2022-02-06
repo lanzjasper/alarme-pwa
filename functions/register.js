@@ -29,7 +29,10 @@ exports.handler = async (event) => {
       user_vaccinated: '',
       user_vtype: '',
       user_vdose: '',
-      issent_passcode: 0
+      issent_passcode: 0,
+      user_status: registerDataFromJSON['user_photo']
+        ? 'verified'
+        : 'unverified'
     };
 
     const checkUsername = () => {

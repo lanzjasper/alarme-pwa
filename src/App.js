@@ -34,18 +34,20 @@ function App() {
           sessionStorage.setItem(key, value);
         }
 
+        setIsLoggingIn(false);
+
         navigate('/home', {
           replace: true
         });
       } else {
+        setIsLoggingIn(false);
+
         // eslint-disable-next-line
         M.toast({
           html: 'Login failed! Invalid credentials!',
           displayLength: 2000
         });
       }
-
-      setIsLoggingIn(false);
     } catch (e) {
       // eslint-disable-next-line
       M.toast({

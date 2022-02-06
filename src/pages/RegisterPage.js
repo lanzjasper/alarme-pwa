@@ -33,6 +33,7 @@ const RegisterPage = () => {
   const [genderHasChanged, setGenderHasChanged] = useState(false);
   const [contactNumber, setContactNumber] = useState('');
   const [contactNumberHasChanged, setContactNumberHasChanged] = useState(false);
+  const [isValidContactNumber, setIsValidContactNumber] = useState({});
   const [telephoneNumber, setTelephoneNumber] = useState('');
   const [telephoneNumberHasChanged, setTelephoneNumberHasChanged] =
     useState(false);
@@ -90,6 +91,14 @@ const RegisterPage = () => {
 
     return () => clearTimeout(timer);
   }, [username]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      validateContactNumber(contactNumber);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [contactNumber]);
 
   const validateEmail = async (email) => {
     // eslint-disable-next-line
@@ -176,8 +185,42 @@ const RegisterPage = () => {
   const validateName = (name) => {
     return name.trim() !== '';
   };
-  const validateContactNumber = (contactNumber) => {
-    return contactNumber.trim() !== '';
+  const validateContactNumber = async (contactNumber) => {
+    if (contactNumber.trim() === '') {
+      setIsValidContactNumber({
+        valid: false,
+        message: 'Invalid contact number!'
+      });
+
+      return false;
+    }
+
+    try {
+      let contactNumberExists = await axios.get(
+        '/.netlify/functions/check-mobile-number',
+        {
+          params: {
+            contact_no: contactNumber
+          }
+        }
+      );
+
+      contactNumberExists = contactNumberExists.data.existing;
+
+      setIsValidContactNumber({
+        valid: !contactNumberExists,
+        message: contactNumberExists ? 'Contact number already exists!' : ''
+      });
+
+      return !contactNumberExists;
+    } catch (e) {
+      setIsValidContactNumber({
+        valid: false,
+        message: 'Contact number already exists!'
+      });
+
+      return false;
+    }
   };
   const validateGender = (gender) => {
     return ['m', 'f'].includes(gender);
@@ -248,11 +291,11 @@ const RegisterPage = () => {
       stepperInstance.nextStep();
     }
   };
-  const goToPersonalAddress = () => {
+  const goToPersonalAddress = async () => {
     const validFirstName = validateName(firstName);
     const validLastName = validateName(lastName);
     const validGender = validateGender(gender);
-    const validContactNumber = validateContactNumber(contactNumber);
+    const validContactNumber = await validateContactNumber(contactNumber);
 
     if (
       !validFirstName ||
@@ -287,27 +330,31 @@ const RegisterPage = () => {
     const validCity = validateCity(city);
     const validProvince = validateProvince(province);
 
-    if (addressStatus === 'live') {
-      if (!validAddress || !validCity || !validProvince) {
-        if (!validAddress) {
-          addressInputRef.current.classList.add('invalid');
-          setAddressHasChanged(true);
-        }
+    if (
+      addressStatus === 'live' &&
+      (!validAddress || !validCity || !validProvince)
+    ) {
+      if (!validAddress) {
+        addressInputRef.current.classList.add('invalid');
+        setAddressHasChanged(true);
+      }
 
-        if (!validCity) {
-          cityInputRef.current.classList.add('invalid');
-          setCityHasChanged(true);
-        }
+      if (!validCity) {
+        cityInputRef.current.classList.add('invalid');
+        setCityHasChanged(true);
+      }
 
-        if (!validProvince) {
-          provinceInputRef.current.classList.add('invalid');
-          setProvinceHasChanged(true);
-        }
+      if (!validProvince) {
+        provinceInputRef.current.classList.add('invalid');
+        setProvinceHasChanged(true);
       }
     } else {
+      console.log('has agree', hasAgree);
       if (!hasAgree) {
         // eslint-disable-next-line
-        M.toast({ html: 'You have to agree with the terms and shits first!' });
+        M.toast({
+          html: 'You have to agree with the terms and agreements first!'
+        });
 
         return;
       }
@@ -642,7 +689,7 @@ const RegisterPage = () => {
                         className={[
                           !contactNumberHasChanged
                             ? ''
-                            : validateContactNumber(contactNumber)
+                            : isValidContactNumber.valid
                             ? 'valid'
                             : 'invalid'
                         ]}
@@ -654,10 +701,10 @@ const RegisterPage = () => {
                       />
                       <label htmlFor="contactNumber">Contact Number</label>
                       {contactNumberHasChanged &&
-                        !validateContactNumber(contactNumber) && (
+                        !isValidContactNumber.valid && (
                           <span
                             className="helper-text"
-                            data-error="Contact number cannot be empty!"
+                            data-error={isValidContactNumber.message}
                           ></span>
                         )}
                     </div>
@@ -755,7 +802,7 @@ const RegisterPage = () => {
                             }}
                             ref={addressInputRef}
                           />
-                          <label htmlFor="houseNoStreetName">
+                          <label htmlFor="houseNoStreetName" className="active">
                             House No. Street Name
                           </label>
                           {addressHasChanged && !validateAddress(address) && (
@@ -785,7 +832,9 @@ const RegisterPage = () => {
                             }}
                             ref={cityInputRef}
                           />
-                          <label htmlFor="city">City</label>
+                          <label htmlFor="city" className="active">
+                            City
+                          </label>
                           {cityHasChanged && !validateCity(city) && (
                             <span
                               className="helper-text"
@@ -813,7 +862,9 @@ const RegisterPage = () => {
                             }}
                             ref={provinceInputRef}
                           />
-                          <label htmlFor="province">Province</label>
+                          <label htmlFor="province" className="active">
+                            Province
+                          </label>
                           {provinceHasChanged &&
                             !validateProvince(province) && (
                               <span
