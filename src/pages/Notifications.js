@@ -7,8 +7,12 @@ const Notifications = () => {
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [longLat, setLongLat] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [radiusInKilometer, setRadiusInKilometer] = useState(1);
-  const [isGettingNotifications, setIsGettingNotifications] = useState(true);
+  const [isGettingNotifications, setIsGettingNotifications] = useState(false);
+  const [isGettingMoreNotifications, setIsGettingMoreNotifications] =
+    useState(false);
+  const [hasMoreData, setHasMoreData] = useState(true);
   const emergencyIDMapping = {
     1: 'Fire',
     3: 'Traffic',
@@ -30,6 +34,48 @@ const Notifications = () => {
     1: 'Fatal'
   };
 
+  const getMoreNotifications = () => {
+    setIsGettingMoreNotifications(true);
+
+    const params = {
+      long: longLat.lng,
+      lat: longLat.lat,
+      radius_in_km: parseInt(radiusInKilometer),
+      page: currentPage
+    };
+
+    axios
+      .get('/.netlify/functions/incidents', {
+        params: params
+      })
+      .then(async (res) => {
+        if (res.data.success) {
+          let _notifications = res.data.data;
+
+          _notifications = await Promise.all(
+            _notifications.map(async (notification) => {
+              const coordinatesToNameAPI = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${notification.report_latitude}&lon=${notification.report_longitude}&zoom=18&addressdetails=1`;
+
+              const coordinatesToName = await axios.get(coordinatesToNameAPI);
+
+              notification.where = coordinatesToName.data.display_name;
+
+              return notification;
+            })
+          );
+
+          if (_notifications.length === 0) {
+            setHasMoreData(false);
+          }
+
+          setNotifications([...notifications, ..._notifications]);
+          setCurrentPage(currentPage + 1);
+        }
+
+        setIsGettingMoreNotifications(false);
+      });
+  };
+
   useEffect(() => {
     const showPosition = (position) => {
       setLongLat({
@@ -37,16 +83,17 @@ const Notifications = () => {
         lng: position.coords.longitude
       });
 
-      const longLatdata = {
+      const params = {
         long: position.coords.longitude,
         lat: position.coords.latitude,
-        radius_in_km: parseInt(radiusInKilometer)
+        radius_in_km: 1,
+        page: 1
       };
-
       setIsGettingNotifications(true);
+
       axios
         .get('/.netlify/functions/incidents', {
-          params: longLatdata
+          params: params
         })
         .then(async (res) => {
           if (res.data.success) {
@@ -64,9 +111,15 @@ const Notifications = () => {
               })
             );
 
-            setIsGettingNotifications(false);
+            if (_notifications.length === 0) {
+              setHasMoreData(false);
+            }
+
             setNotifications(_notifications);
+            setCurrentPage(2);
           }
+
+          setIsGettingNotifications(false);
         });
     };
     const locationError = () => {
@@ -78,7 +131,7 @@ const Notifications = () => {
     }
 
     return () => {};
-  }, [radiusInKilometer]);
+  }, []);
   const openModal = (e, notificationData) => {
     e.preventDefault();
 
@@ -89,8 +142,12 @@ const Notifications = () => {
     });
   };
 
+  useEffect(() => {
+    console.log('notifications', notifications);
+  }, [notifications]);
+
   return (
-    <>
+    <div id="scrollableDiv" style={{ height: '100vh', overflow: 'auto' }}>
       <HomeNavigation />
       <div className="container">
         <div className="row">
@@ -109,8 +166,15 @@ const Notifications = () => {
             </p>
           </div>
         </div>
-        {isGettingNotifications && (
-          <div className="col s12">
+        {!longLat && (
+          <div className="row">
+            <div className="col s12">
+              <h4 style={{ textAlign: 'center' }}>Location access needed!</h4>
+            </div>
+          </div>
+        )}
+        <div className="container-fluid">
+          {isGettingNotifications && (
             <div className="center-loader-container">
               <div className="preloader-wrapper big active">
                 <div className="spinner-layer spinner-blue-only">
@@ -126,14 +190,11 @@ const Notifications = () => {
                 </div>
               </div>
             </div>
-          </div>
-        )}
-        {!isGettingNotifications &&
-          longLat &&
-          notifications.map((notification) => {
-            return (
-              <div className="row" key={notification.report_id}>
-                <div className="col s12">
+          )}
+          {longLat &&
+            notifications.map((notification) => {
+              return (
+                <div className="col s12" key={notification.report_id}>
                   <div className="card alarme-background">
                     <div className="card-content white-text">
                       <span className="card-title">
@@ -163,6 +224,8 @@ const Notifications = () => {
                       ) : (
                         <></>
                       )}
+                      <p>{notification.report_datetime}</p>
+                      <p>Report ID: {notification.report_id}</p>
                     </div>
                     <div className="card-action">
                       {/* eslint-disable-next-line */}
@@ -176,18 +239,54 @@ const Notifications = () => {
                     </div>
                   </div>
                 </div>
+              );
+            })}
+          {isGettingMoreNotifications && !isGettingNotifications && (
+            <div className="center-loader-container">
+              <div className="preloader-wrapper big active">
+                <div className="spinner-layer spinner-blue-only">
+                  <div className="circle-clipper left">
+                    <div className="circle"></div>
+                  </div>
+                  <div className="gap-patch">
+                    <div className="circle"></div>
+                  </div>
+                  <div className="circle-clipper right">
+                    <div className="circle"></div>
+                  </div>
+                </div>
               </div>
-            );
-          })}
-        {!longLat && (
-          <div className="row">
-            <div className="col s12">
-              <h4 style={{ textAlign: 'center' }}>Location access needed!</h4>
             </div>
-          </div>
-        )}
+          )}
+          {hasMoreData && notifications.length !== 0 && (
+            <div
+              style={{ paddingBottom: 20, paddingTop: 20, textAlign: 'center' }}
+            >
+              <button
+                className={`waves-effect btn alarme-background ${
+                  isGettingMoreNotifications ? 'disabled' : ''
+                }`}
+                onClick={getMoreNotifications}
+                type="button"
+              >
+                Load More
+              </button>
+            </div>
+          )}
+          {!hasMoreData && (
+            <div
+              style={{
+                textAlign: 'center',
+                paddingBottom: 20,
+                fontWeight: 500
+              }}
+            >
+              No more data to load
+            </div>
+          )}
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

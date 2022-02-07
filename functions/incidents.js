@@ -14,13 +14,14 @@ exports.handler = async (event) => {
     const lat = event.queryStringParameters.lat;
     const radiusInKilometer = event.queryStringParameters.radius_in_km;
     const radiusInMile = radiusInKilometer * 0.621371;
+    const page = event.queryStringParameters.page;
 
     const getNearbyIncidents = () => {
       return new Promise((resolve, reject) => {
         console.log(
           connection.query(
-            'SELECT *, (3959 * acos (cos ( radians(?) ) * cos( radians( report_latitude ) ) * cos( radians( report_longitude ) - radians(?) ) + sin ( radians(?) ) * sin( radians( report_latitude ) ) ) ) AS distance FROM tbl_reports HAVING distance < ? ORDER BY report_datetime DESC',
-            [lat, long, lat, radiusInMile],
+            'SELECT *, (3959 * acos (cos ( radians(?) ) * cos( radians( report_latitude ) ) * cos( radians( report_longitude ) - radians(?) ) + sin ( radians(?) ) * sin( radians( report_latitude ) ) ) ) AS distance FROM tbl_reports HAVING distance < ? ORDER BY report_datetime DESC LIMIT 5 OFFSET ?',
+            [lat, long, lat, radiusInMile, (page - 1) * 5],
             function (error, results) {
               console.log('');
               if (error) {
